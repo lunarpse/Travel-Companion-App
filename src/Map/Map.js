@@ -2,7 +2,7 @@ import { CircularProgress, Paper, Rating, Typography, useMediaQuery } from '@mui
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
 import useStyles from './style'
-import {GoogleMap, Marker, useJsApiLoader, useLoadScript} from '@react-google-maps/api'
+import {GoogleMap, InfoWindow, Marker, OverlayView, useJsApiLoader, useLoadScript} from '@react-google-maps/api'
 import {LocationOnOutlined} from  '@mui/icons-material'
 const mapContainerStyle = {
   width: "100vw", // Full width
@@ -66,13 +66,36 @@ const Map = ({setcoordinates,setbound,bound,coordinates,places}) => {
       
       >
         
-        {places && places.map(place=>(
-           <Marker position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
-           icon={{
-            url:place.photo?place.photo.images.large.url:'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg',
-          scaledSize:new window.google.maps.Size(130,130) 
-          }}
-           label="A"/>
+        {places && places.map((place,i)=>(
+          //  <Marker position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
+          //  icon={{
+          //   url:place.photo?place.photo.images.large.url:'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg',
+          // scaledSize:new window.google.maps.Size(130,130) 
+          // }}
+          //  label="A"/>
+          // <InfoWindow 
+          // position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
+          // >
+<OverlayView position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
+mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
+<div className={classes.markerContainer}
+         
+          key={i}
+          >
+               {!isdesktop?(<LocationOnOutlined color='primary' fontSize='large' />):(
+          <Paper elevation={3} className={classes.paper}>
+            <Typography className={classes.typography} variant='subtitle2' gutterBottom>{place.name}</Typography>
+            <img
+                    className={classes.pointer}
+                    src={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'}
+                  />
+            <Rating readOnly value={Number(place.rating)} size='small' name='read-only'/> 
+          </Paper>
+        )}
+
+          </div>
+          </OverlayView>
+         // </InfoWindow>
 
         ))}
 
