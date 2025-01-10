@@ -14,7 +14,7 @@ const Map = ({weatherdata,setchildclicked,setcoordinates,setbound,bound,coordina
     lng: -38.523,}
   const classes=useStyles();
   const {isLoaded}=useJsApiLoader({
-    googleMapsApiKey:'AIzaSyBQckvL_k-xwC3SVIDUoQ3E-KCsev-X3LA'
+    googleMapsApiKey:process.env.REACT_APP_GOOGLE_MAP_API
   })
   console.log(coordinates)
 
