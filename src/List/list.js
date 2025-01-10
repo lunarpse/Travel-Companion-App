@@ -1,13 +1,18 @@
 import { FormControl, Input, InputLabel, MenuItem, Select,Grid ,Typography, CircularProgress } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import useStyle from './style';
 import PlaceDetails from '../PlaceDetail/PlaceDetail'
 
 
-const List = ({places,setplaces,type,rating,settype,setrating,loading}) => {
-  
+const List = ({childclicked, places,setplaces,type,rating,settype,setrating,loading}) => {
+  const [elref,setelref]=useState([])
   const classes=useStyle()
- 
+  console.log("llll" + childclicked)
+  useEffect(()=>{
+    
+    setelref(refs=>Array(places?.length).fill().map((_,i)=>refs[i] || createRef()))
+  },[places])
+ console.log(elref)
   return (
     <div className={classes.container}>
 <Typography variant='h4'>Restaurants,Hotels and Attractions around you</Typography>
@@ -37,8 +42,8 @@ const List = ({places,setplaces,type,rating,settype,setrating,loading}) => {
 
 <Grid container spacing={3} className={classes.list}>
  {places?.map((place,i)=>(
-  <Grid item xs={12}>
-    <PlaceDetails place={place}/>
+  <Grid ref={elref[i]} item xs={12}>
+    <PlaceDetails place={place} refprop={elref[i]} selected={Number(childclicked)===i}/>
   </Grid>
  ))}
 </Grid>

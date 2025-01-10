@@ -1,4 +1,4 @@
-import { CircularProgress, Paper, Rating, Typography, useMediaQuery } from '@mui/material'
+import { Button, CircularProgress, iconClasses, Paper, Rating, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
 import useStyles from './style'
@@ -8,7 +8,7 @@ const mapContainerStyle = {
   width: "100vw", // Full width
   height: "100vh", // Full height
 };
-const Map = ({setcoordinates,setbound,bound,coordinates,places}) => {
+const Map = ({weatherdata,setchildclicked,setcoordinates,setbound,bound,coordinates,places}) => {
   const [map, setMap] = React.useState(null)
   const coords={  lat: -3.745,
     lng: -38.523,}
@@ -37,14 +37,12 @@ const Map = ({setcoordinates,setbound,bound,coordinates,places}) => {
     return <div>Loading...</div>
   }
 
-  console.log(map)
-  console.log(places)
-  
-  console.log(isLoaded)
+
   
   return (
     <div className={classes.mapContainer}>
      <GoogleMap
+     onRightClick={child=>console.log(child)}
      mapContainerStyle={mapContainerStyle}
       center={coordinates}
       zoom={6}
@@ -65,19 +63,40 @@ const Map = ({setcoordinates,setbound,bound,coordinates,places}) => {
       
       
       >
+        {weatherdata?.weather?.length && weatherdata.weather.map(data=>(
+          <Marker
+          position={{lat:weatherdata.coord.lat,lng:weatherdata.coord.lon}}
+      
+          icon={{url:data.icon,scaledSize:window.google.maps.Size(70,70)}}
+          />
+        ))}
         
         {places && places.map((place,i)=>(
-          //  <Marker position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
-          //  icon={{
-          //   url:place.photo?place.photo.images.large.url:'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg',
-          // scaledSize:new window.google.maps.Size(130,130) 
-          // }}
-          //  label="A"/>
-          // <InfoWindow 
+          <>
+          
+           
+          {/* // <InfoWindow 
           // position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
-          // >
-<OverlayView position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
+          // > */}
+          <Marker position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
+           onClick={()=>{
+            setchildclicked(i)
+           }}
+
+           icon={{url:place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg',
+            scaledSize:new window.google.maps.Size(80,80)
+           }}
+           
+          />
+          {/* <InfoWindow  position={{lat:Number(place.latitude),lng:Number(place.longitude)}}> 
+           <button onClick={()=>{setchildclicked(i)}}>
+           <img src={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'} width='80px' height='80px' />
+           </button>
+          </InfoWindow> */}
+         
+{/* <OverlayView position={{lat:Number(place.latitude),lng:Number(place.longitude)}}
 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
+
 <div className={classes.markerContainer}
          
           key={i}
@@ -94,7 +113,9 @@ mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
         )}
 
           </div>
-          </OverlayView>
+   
+          </OverlayView> */}
+          </>
          // </InfoWindow>
 
         ))}

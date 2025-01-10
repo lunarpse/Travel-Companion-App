@@ -5,7 +5,12 @@ import { Box } from '@mui/system';
 import {LocationOn,Phone}from '@mui/icons-material'
 
 
-const PlaceDetail = ({place}) => {
+const PlaceDetail = ({place,selected,refprop}) => {
+  
+  if(selected){
+
+    refprop?.current?.scrollIntoView({behavioud:'smooth',block:'start'})
+  }
   const classes=useStyles();
   return (
     <Card elevation={6}>

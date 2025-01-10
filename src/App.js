@@ -5,11 +5,12 @@ import CssBaseline from "@mui/material/CssBaseline"
 import Grid from "@mui/material/Grid"
 import Header from "./header/heaader"
 import { useEffect, useState } from "react";
-import { getplacesdata } from "./api/travel";
+import { getplacesdata, getweatherdata } from "./api/travel";
 import { CircularProgress } from "@mui/material";
 
 
 const App=()=> {
+  const [weatherdata,setweatherdata]=useState([])
   const [coordinates,setcoordinates]=useState({});
   const [bound,setbound]=useState({})
   const [places,setplaces]=useState([])
@@ -17,27 +18,26 @@ const App=()=> {
   const [rating,setrating]=useState('')
   const [loading,setloading]=useState(false)
   const [filteredplace,setfilteredplace]=useState([])
+  const [childclicked,setchildclicked]=useState(null)
+  const [autocomplete,setautocomplete]=useState(null)
 
   useEffect(()=>{
     const data=places.filter(place=>Number(place.rating)>(rating))
-    console.log(data)
+    
     setfilteredplace(data)
   },[rating])
   useEffect(()=>{
-    console.log("a")
     
     navigator.geolocation.getCurrentPosition(({coords:{latitude,longitude}})=>{
-      console.log(typeof latitude)
+     
       setcoordinates({lat:latitude,lng:longitude})
       setbound({ne:{lat:latitude+0.5,lng:longitude+0.5},sw:{lat:latitude-0.5,lng:longitude-0.5}})
     })
   },[])
-
-
  useEffect(()=>{
-  console.log("b")
-  console.log(bound)
+  
   setloading(true)
+  getweatherdata(Number(coordinates.lat),Number(coordinates.lng)).then(data=>setweatherdata(data))
 
   getplacesdata(type,bound.ne,bound.sw).then(data=>{
     console.log(data)
@@ -45,20 +45,31 @@ const App=()=> {
     setloading(false)
   })
  },[coordinates,bound,type])
- console.log("c")
- console.log(coordinates.length)
+ console.log(coordinates)
+ console.log(weatherdata)
+
+ const onload=(autoc)=>setautocomplete(autoc)
+ const onPlaceChanged = () => {
+  const lat = autocomplete.getPlace().geometry.location.lat();
+  const lng = autocomplete.getPlace().geometry.location.lng();
+
+  setcoordinates({ lat, lng });
+};
+
 
   return (
     <>
     <CssBaseline/>
-    <Header/>
+    <Header onPlaceChanged={onPlaceChanged} onload={onload}/>
     <Grid container spacing={3} style={{width:"100%"}}>
       <Grid item xs={12} md={4}>
-        <List loading={loading} type={type} rating={rating} settype={settype} setrating={setrating} places={filteredplace.length>0?filteredplace: places} setplaces={setplaces}/>
+        <List loading={loading} childclicked={childclicked} type={type} rating={rating} settype={settype} setrating={setrating} places={filteredplace.length>0?filteredplace: places} setplaces={setplaces}/>
       </Grid>
       <Grid item xs={12} md={7}>
         {Object.keys(coordinates).length>0?(<Map
+        weatherdata={weatherdata}
         bound={bound}
+        setchildclicked={setchildclicked}
         places={filteredplace.length>0?filteredplace: places}
         setcoordinates={setcoordinates}
         setbound={setbound}

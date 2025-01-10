@@ -27,3 +27,22 @@ export const getplacesdata=async(type,ne,sw)=>{
         
     }
 }
+
+export const getweatherdata=async(lat,lng)=>{
+    try {
+        if(lat && lng){
+            const {data}=await axios.get('https://weather-api167.p.rapidapi.com/api/weather/current?place=London&units=standard&lang=en&mode=json',{
+                params:{lat,lon:lng},
+                headers: {
+                    'x-rapidapi-key': 'ff4be71a20mshd25c231472fdb59p11b3fbjsnfed4714cac5a',
+                    'x-rapidapi-host': 'weather-api167.p.rapidapi.com',
+                  }
+            })
+            return data
+        }
+      
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
